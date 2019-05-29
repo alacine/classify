@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 import os
+import shutil
 import json
 
 
@@ -7,7 +9,7 @@ class Classify:
 
     Args:
         target_dir (str): 需要进行文档分类的根目录
-        content (set(str)): 需要分类的字段集
+        content (list(str)): 需要分类的字段集
 
     Attributes:
         target_dir (str): 需要进行文档分类的根目录
@@ -20,7 +22,6 @@ class Classify:
             target_dir (str): 需要进行文档分类的根目录
         """
         self.target_dir = target_dir
-        self.all_files = os.walk(self.target_dir)
         self.extension_sorted = {}
         self.name_sorted = {}
 
@@ -30,6 +31,8 @@ class Classify:
             for filename in filenames:
                 path_to_file = os.path.join(dirpath, filename)
                 file_ext = os.path.splitext(filename)[1]
+                if not file_ext:
+                    file_ext = '.No_extension_file'
                 if file_ext not in self.extension_sorted:
                     self.extension_sorted[file_ext] = []
                 self.extension_sorted[file_ext].append(path_to_file)
@@ -39,9 +42,10 @@ class Classify:
         Args:
             content (set[str]): 需要分类的字段集
         """
+        contents = set(content_list)
         for dirpath, dirnames, filenames in os.walk(self.target_dir):
             for filename in filenames:
-                for content in content_list:
+                for content in contents:
                     if content not in filename:
                         continue
                     path_to_file = os.path.join(dirpath, filename)
@@ -53,11 +57,19 @@ class Classify:
         """根据扩展名的分类结果归类文件到相应扩展名的目录"""
         # 创建相应目录
         for extension in self.extension_sorted:
-            if not extension:
-                extension = '.No_extension_file'
             if extension[1:] not in os.listdir(self.target_dir):
                 os.mkdir(os.path.join(self.target_dir, extension[1:]))
         # 移动到相应目录
+        for extension, filenames in self.extension_sorted.items():
+            for filename in filenames:
+                destination = os.path.join(
+                    self.target_dir,
+                    extension[1:],
+                    os.path.split(filename)[1]
+                )
+                # print(destination)
+                # shutil.copyfile(filename, destination)
+                shutil.move(filename, destination)
 
     def do_name_sort(self):
         """根据名称的分类结果归类文件到相应的名称的目录"""
@@ -66,18 +78,30 @@ class Classify:
             if name not in os.listdir(self.target_dir):
                 os.mkdir(os.path.join(self.target_dir, name))
         # 移动到相应目录
+        for filetype, filenames in self.name_sorted.items():
+            for filename in filenames:
+                destination = os.path.join(
+                    self.target_dir,
+                    filetype,
+                    os.path.split(filename)[1]
+                )
+                # print(destination)
+                # shutil.copyfile(filename, destination)
+                shutil.move(filename, destination)
 
 
 def test():
-    a = Classify('./test')
-    a.sort_by_extension()
-    print(json.dumps(a.extension_sorted, indent=4))
+    """单元测试"""
+    test_dir = Classify('./test')
+    test_dir.sort_by_extension()
+    print(json.dumps(test_dir.extension_sorted, indent=4))
     test_content_set = ('111', '2', '33')
-    a.sort_by_name(test_content_set)
-    print(json.dumps(a.name_sorted, indent=4))
-    a.do_extension_sort()
-    a.do_name_sort()
+    test_dir.sort_by_name(test_content_set)
+    print(json.dumps(test_dir.name_sorted, indent=4))
+    # test_dir.do_extension_sort()
+    test_dir.do_name_sort()
 
 
 if __name__ == '__main__':
-    test()
+    # test()
+    print(os.path.abspath('.'))
