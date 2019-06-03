@@ -53,7 +53,7 @@ class Classify:
                         self.name_sorted[content] = []
                     self.name_sorted[content].append(path_to_file)
 
-    def do_extension_sort(self):
+    def do_extension_sort(self, copy=False):
         """根据扩展名的分类结果归类文件到相应扩展名的目录"""
         # 创建相应目录
         for extension in self.extension_sorted:
@@ -68,10 +68,12 @@ class Classify:
                     os.path.split(filename)[1]
                 )
                 # print(destination)
-                # shutil.copyfile(filename, destination)
-                shutil.move(filename, destination)
+                if copy:
+                    shutil.copyfile(filename, destination)
+                else:
+                    shutil.move(filename, destination)
 
-    def do_name_sort(self):
+    def do_name_sort(self, copy=False):
         """根据名称的分类结果归类文件到相应的名称的目录"""
         # 创建相应目录
         for name in self.name_sorted:
@@ -86,22 +88,27 @@ class Classify:
                     os.path.split(filename)[1]
                 )
                 # print(destination)
-                # shutil.copyfile(filename, destination)
-                shutil.move(filename, destination)
+                if copy:
+                    shutil.copyfile(filename, destination)
+                else:
+                    shutil.move(filename, destination)
 
 
 def test():
     """单元测试"""
-    test_dir = Classify('./test')
+    test_target_dir = 'test'
+    if test_target_dir not in os.listdir('.'):
+        os.mkdir(test_target_dir)
+    test_dir = Classify(test_target_dir)
     test_dir.sort_by_extension()
     print(json.dumps(test_dir.extension_sorted, indent=4))
-    test_content_set = ('111', '2', '33')
-    test_dir.sort_by_name(test_content_set)
+    test_content_list = ['111', '2', '33']
+    test_dir.sort_by_name(test_content_list)
     print(json.dumps(test_dir.name_sorted, indent=4))
-    # test_dir.do_extension_sort()
-    test_dir.do_name_sort()
+    test_dir.do_extension_sort(True)
+    # test_dir.do_name_sort()
 
 
 if __name__ == '__main__':
-    # test()
+    test()
     print(os.path.abspath('.'))
