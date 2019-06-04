@@ -7,3 +7,8 @@
 * 分类方法:
     1. 文件后缀名
     2. 关键词
+
+
+### 初步简单设计
+
+![expectation](./expectation.png)
