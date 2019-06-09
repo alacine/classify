@@ -1,6 +1,6 @@
 import json
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog
 import webbrowser
 import classify
 
@@ -50,7 +50,12 @@ class MyWindow(tk.Tk):
         self.config(menu=menubar)
 
         # 标题
-        heading = tk.Label(frame1, text='Classify 文档归类工具', height=2, bg='green')
+        heading = tk.Label(
+            frame1,
+            text='Classify 文档归类工具',
+            height=2,
+            bg='green'
+        )
         heading.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         # 选择目录按钮
@@ -107,13 +112,15 @@ class MyWindow(tk.Tk):
         )
         clean_button.pack(side=tk.RIGHT)
 
-    def project_url(self):
+    @staticmethod
+    def project_url():
         """项目地址按钮动作
         点击打开项目网址
         """
         webbrowser.open('https://gitee.com/ryanrui/classify')
 
-    def report_bug(self):
+    @staticmethod
+    def report_bug():
         """问题反馈按钮动作
         点击打开新窗口, 显示提示信息和提交邮箱
         """
@@ -128,7 +135,8 @@ class MyWindow(tk.Tk):
         )
         tk.messagebox.showinfo(title=msg_title, message=msg_content)
 
-    def how_to_use(self):
+    @staticmethod
+    def how_to_use():
         """如何使用按钮动作
         点击打开新窗口, 显示使用手册
         """
@@ -148,6 +156,7 @@ class MyWindow(tk.Tk):
         self.file_path = filedialog.askdirectory()
 
     def is_select(self):
+        """判断是否有选择"""
         self.is_select_flag = True
 
     def preview(self):
@@ -155,9 +164,15 @@ class MyWindow(tk.Tk):
         点击后在预览框内显示分类结果(json 格式)
         """
         classify_data = classify.Classify(self.file_path)
-        self.clean_show_list()
-        classify_data.sort_by_extension()
-        preview_data = json.dumps(classify_data.extension_sorted, indent=4)
+        # content_list_in_text = self.show_list.get('0.0', 'end-1c')
+        content_list = ['111', '2', '33']
+        # print(content_list_in_text)
+        if self.selection.get() == 0:
+            classify_data.sort_by_extension()
+            preview_data = json.dumps(classify_data.extension_sorted, indent=4)
+        else:
+            classify_data.sort_by_name(content_list)
+            preview_data = json.dumps(classify_data.name_sorted, indent=4)
         self.show_list.insert('end', preview_data)
 
     def clean_show_list(self):
@@ -170,6 +185,7 @@ class MyWindow(tk.Tk):
         """应用分类结果按钮
         点击后弹出提示框确认, 确认后实施分类
         """
+        # if self.selection == 0:
         pass
 
 
