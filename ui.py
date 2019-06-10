@@ -1,8 +1,18 @@
+# -*- coding: utf-8 -*-
 import json
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import webbrowser
 import classify
+
+
+def change_status(button_func):
+    """按钮装饰器, 使得按钮工作时可以显示是否工作完成"""
+    def wrapper(self):
+        self.status.set('{}{}...'.format('开始', button_func.__name__))
+        button_func(self)
+        self.status.set('{}{}'.format('结束', button_func.__name__))
+    return wrapper
 
 
 class MyWindow(tk.Tk):
@@ -11,8 +21,8 @@ class MyWindow(tk.Tk):
     def __init__(self):
         """初始化"""
         super().__init__()
-        self.status = '启动'
-        self.selection = tk.IntVar()
+        self.status = tk.StringVar(value='启动')
+        self.selection = tk.IntVar(value=0)
         self.clfy_ins = classify.Classify('.')
         self.setup_ui()
 
@@ -92,8 +102,8 @@ class MyWindow(tk.Tk):
         self.show_list.pack(fill=tk.BOTH, expand=True)
 
         # 状态显示
-        show_status = tk.Label(frame4, text=self.status)
-        show_status.pack(side=tk.LEFT)
+        self.show_status = tk.Label(frame4, textvariable=self.status)
+        self.show_status.pack(side=tk.LEFT)
 
         # 应用分类结果按钮
         apply_button = tk.Button(
@@ -146,12 +156,14 @@ class MyWindow(tk.Tk):
         )
         tk.messagebox.showinfo(title=msg_title, message=msg_content)
 
+    @change_status
     def open_dir(self):
         """选择目录按钮动作
         点击打开窗口, 手动选择目录
         """
         self.clfy_ins.target_dir = filedialog.askdirectory()
 
+    @change_status
     def preview(self):
         """分类预览按钮动作
         点击后在预览框内显示分类结果(json 格式)
@@ -169,6 +181,7 @@ class MyWindow(tk.Tk):
             preview_data = json.dumps(self.clfy_ins.name_sorted, indent=4)
         self.show_list.insert('end', preview_data)
 
+    @change_status
     def clean_show_list(self):
         """清空预览结果按钮
         点击后清空预览框中的内容, 清空 clfy_ins 原有的分类结果
@@ -177,6 +190,7 @@ class MyWindow(tk.Tk):
         self.clfy_ins.extension_sorted.clear()
         self.clfy_ins.name_sorted.clear()
 
+    @change_status
     def apply_show_list(self):
         """应用分类结果按钮
         点击后弹出提示框确认, 确认后实施分类
