@@ -1,6 +1,6 @@
 import json
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 import webbrowser
 import classify
 
@@ -12,9 +12,8 @@ class MyWindow(tk.Tk):
         """初始化"""
         super().__init__()
         self.status = '启动'
-        self.file_path = None
         self.selection = tk.IntVar()
-        self.is_select_flag = False
+        self.clfy_ins = classify.Classify('.')
         self.setup_ui()
 
     def setup_ui(self):
@@ -71,7 +70,6 @@ class MyWindow(tk.Tk):
             text='根据文件类型分类',
             variable=self.selection,
             value=0,
-            command=self.is_select
         )
         select_way_button1.pack(side=tk.TOP)
         select_way_button2 = tk.Radiobutton(
@@ -79,7 +77,6 @@ class MyWindow(tk.Tk):
             text='根据给定文件名称分类',
             variable=self.selection,
             value=1,
-            command=self.is_select
         )
         select_way_button2.pack(side=tk.BOTTOM)
 
@@ -142,7 +139,7 @@ class MyWindow(tk.Tk):
         """
         msg_title = '使用说明'
         msg_content = (
-            '1. 选择你要整理的目录\n'
+            '1. 选择你要整理的目录（默认使用当前目录）\n'
             '2. 选择文件分类方式\n'
             '3. 点击分类预览\n'
             '4. 确认分类无误后点击应用分类结果'
@@ -153,40 +150,40 @@ class MyWindow(tk.Tk):
         """选择目录按钮动作
         点击打开窗口, 手动选择目录
         """
-        self.file_path = filedialog.askdirectory()
-
-    def is_select(self):
-        """判断是否有选择"""
-        self.is_select_flag = True
+        self.clfy_ins.target_dir = filedialog.askdirectory()
 
     def preview(self):
         """分类预览按钮动作
         点击后在预览框内显示分类结果(json 格式)
         """
-        classify_data = classify.Classify(self.file_path)
         # content_list_in_text = self.show_list.get('0.0', 'end-1c')
         content_list = ['111', '2', '33']
         # print(content_list_in_text)
         if self.selection.get() == 0:
-            classify_data.sort_by_extension()
-            preview_data = json.dumps(classify_data.extension_sorted, indent=4)
+            self.clfy_ins.sort_by_extension()
+            preview_data = json.dumps(self.clfy_ins.extension_sorted, indent=4)
         else:
-            classify_data.sort_by_name(content_list)
-            preview_data = json.dumps(classify_data.name_sorted, indent=4)
+            self.clfy_ins.sort_by_name(content_list)
+            preview_data = json.dumps(self.clfy_ins.name_sorted, indent=4)
         self.show_list.insert('end', preview_data)
 
     def clean_show_list(self):
         """清空预览结果按钮
-        点击后清空预览框中的内容
+        点击后清空预览框中的内容, 清空 clfy_ins 原有的分类结果
         """
         self.show_list.delete(0.0, 'end')
+        self.clfy_ins.extension_sorted.clear()
+        self.clfy_ins.name_sorted.clear()
 
     def apply_show_list(self):
         """应用分类结果按钮
         点击后弹出提示框确认, 确认后实施分类
         """
         # if self.selection == 0:
-        pass
+        if self.selection.get() == 0:
+            self.clfy_ins.do_extension_sort(True)
+        else:
+            self.clfy_ins.do_name_sort(True)
 
 
 if __name__ == '__main__':

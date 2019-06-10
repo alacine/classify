@@ -54,7 +54,10 @@ class Classify:
                     self.name_sorted[content].append(path_to_file)
 
     def do_extension_sort(self, copy=False):
-        """根据扩展名的分类结果归类文件到相应扩展名的目录"""
+        """根据扩展名的分类结果归类文件到相应扩展名的目录
+        Args:
+            copy (bool): 归类时是否保留原来的目录结构, 默认不保持
+        """
         # 创建相应目录
         for extension in self.extension_sorted:
             if extension[1:] not in os.listdir(self.target_dir):
@@ -74,7 +77,10 @@ class Classify:
                     shutil.move(filename, destination)
 
     def do_name_sort(self, copy=False):
-        """根据名称的分类结果归类文件到相应的名称的目录"""
+        """根据名称的分类结果归类文件到相应的名称的目录
+        Args:
+            copy (bool): 归类时是否保留原来的目录结构, 默认不保持
+        """
         # 创建相应目录
         for name in self.name_sorted:
             if name not in os.listdir(self.target_dir):
