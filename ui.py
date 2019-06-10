@@ -139,7 +139,7 @@ class MyWindow(tk.Tk):
         """
         msg_title = '使用说明'
         msg_content = (
-            '1. 选择你要整理的目录（默认使用当前目录）\n'
+            '1. 选择你要整理的目录\n'
             '2. 选择文件分类方式\n'
             '3. 点击分类预览\n'
             '4. 确认分类无误后点击应用分类结果'
@@ -156,6 +156,8 @@ class MyWindow(tk.Tk):
         """分类预览按钮动作
         点击后在预览框内显示分类结果(json 格式)
         """
+        self.clfy_ins.extension_sorted.clear()
+        self.clfy_ins.name_sorted.clear()
         # content_list_in_text = self.show_list.get('0.0', 'end-1c')
         content_list = ['111', '2', '33']
         # print(content_list_in_text)
