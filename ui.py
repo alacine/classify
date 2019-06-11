@@ -168,17 +168,16 @@ class MyWindow(tk.Tk):
         """分类预览按钮动作
         点击后在预览框内显示分类结果(json 格式)
         """
-        self.clfy_ins.extension_sorted.clear()
-        self.clfy_ins.name_sorted.clear()
+        self.clean_show_list()
         # content_list_in_text = self.show_list.get('0.0', 'end-1c')
         content_list = ['111', '2', '33']
         # print(content_list_in_text)
         if self.selection.get() == 0:
             self.clfy_ins.sort_by_extension()
-            preview_data = json.dumps(self.clfy_ins.extension_sorted, indent=4)
+            preview_data = json.dumps(self.clfy_ins.extension_sorted, ensure_ascii=False, indent=4)
         else:
             self.clfy_ins.sort_by_name(content_list)
-            preview_data = json.dumps(self.clfy_ins.name_sorted, indent=4)
+            preview_data = json.dumps(self.clfy_ins.name_sorted, ensure_ascii=False, indent=4)
         self.show_list.insert('end', preview_data)
 
     @change_status
