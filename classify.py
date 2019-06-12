@@ -2,6 +2,7 @@
 import os
 import shutil
 import json
+from typing import List
 
 
 class Classify:
@@ -16,7 +17,7 @@ class Classify:
         extension_sorted (dict): 根据扩展名分类后的结果
         name_sorted (dict): 根据名称所含字段分类后的结果
     """
-    def __init__(self, target_dir):
+    def __init__(self, target_dir: str):
         """初始化
         Args:
             target_dir (str): 需要进行文档分类的根目录
@@ -37,7 +38,7 @@ class Classify:
                     self.extension_sorted[file_ext] = []
                 self.extension_sorted[file_ext].append(path_to_file)
 
-    def sort_by_name(self, content_list):
+    def sort_by_name(self, content_list: List[str]):
         """根据文件名称中包含的字段分类
         Args:
             content (set[str]): 需要分类的字段集
@@ -99,7 +100,7 @@ class Classify:
                 else:
                     shutil.move(filename, destination)
 
-    def export_dir(self, chosen, filename):
+    def export_dir(self, chosen: int, filename: str):
         """导出归类文件的目录结构到纯文本文件中
         Args:
             chosen (int): 0 表示使用的是文件扩展名归类, 否则是按名称归类

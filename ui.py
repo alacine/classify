@@ -35,6 +35,8 @@ class MyWindow(tk.Tk):
 
         frame2 = tk.Frame(self)
         frame2.pack(side=tk.TOP, fill=tk.X, expand=True)
+        frame2_d = tk.Frame(frame2)
+        frame2_d.pack(side=tk.BOTTOM, fill=tk.BOTH)
         frame2_a = tk.Frame(frame2)
         frame2_a.pack(side=tk.LEFT)
         frame2_b = tk.Frame(frame2)
@@ -87,8 +89,7 @@ class MyWindow(tk.Tk):
             frame2_b,
             text='根据给定文件名称分类',
             variable=self.selection,
-            value=1,
-            command=self.set_content_list
+            value=1
         )
         select_way_button2.pack(side=tk.BOTTOM)
 
@@ -99,6 +100,16 @@ class MyWindow(tk.Tk):
             command=self.preview
         )
         preview_button.pack(side=tk.LEFT)
+
+        # 分类依据标签
+        content_lable = tk.Label(
+            frame2_d,
+            text='依据文件名分类时, 在此行输入文件名中包含的字符串, 使用英文分号分割'
+        )
+        content_lable.pack(side=tk.TOP, fill=tk.X)
+        # 分类依据输入框
+        self.content_names = tk.Entry(frame2_d)
+        self.content_names.pack(fill=tk.X)
 
         # 分类后结果展示
         self.show_list = tk.Text(frame3)
@@ -176,7 +187,7 @@ class MyWindow(tk.Tk):
     @change_status
     def set_content_list(self):
         """设置分类名称"""
-        pass
+        self.content_list = self.content_names.get().split(';')
 
     @change_status
     def preview(self):
@@ -184,9 +195,6 @@ class MyWindow(tk.Tk):
         点击后在预览框内显示分类结果(json 格式)
         """
         self.clean_show_list()
-        # content_list_in_text = self.show_list.get('0.0', 'end-1c')
-        content_list = ['111', '2', '33']
-        # print(content_list_in_text)
         if self.selection.get() == 0:
             self.clfy_ins.sort_by_extension()
             preview_data = json.dumps(
@@ -195,7 +203,8 @@ class MyWindow(tk.Tk):
                 indent=4
             )
         else:
-            self.clfy_ins.sort_by_name(content_list)
+            self.set_content_list()
+            self.clfy_ins.sort_by_name(self.content_list)
             preview_data = json.dumps(
                 self.clfy_ins.name_sorted,
                 ensure_ascii=False,
@@ -230,7 +239,7 @@ class MyWindow(tk.Tk):
         """应用分类结果按钮
         点击后弹出提示框确认, 确认后实施分类
         """
-        msg_title = '是否确认'
+        msg_title = '提示'
         msg_content = '这将会改变原有的目录结构, 你确定要继续吗?'
         if tk.messagebox.askokcancel(title=msg_title, message=msg_content):
             if self.selection.get() == 0:
