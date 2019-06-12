@@ -24,6 +24,7 @@ class MyWindow(tk.Tk):
         self.status = tk.StringVar(value='启动')
         self.selection = tk.IntVar(value=0)
         self.clfy_ins = classify.Classify('.')
+        self.content_list = []
         self.setup_ui()
 
     def setup_ui(self):
@@ -87,13 +88,15 @@ class MyWindow(tk.Tk):
             text='根据给定文件名称分类',
             variable=self.selection,
             value=1,
+            command=self.set_content_list
         )
         select_way_button2.pack(side=tk.BOTTOM)
 
         # 分类预览按钮
         preview_button = tk.Button(
             frame2_c,
-            text='分类预览', command=self.preview
+            text='分类预览',
+            command=self.preview
         )
         preview_button.pack(side=tk.LEFT)
 
@@ -111,6 +114,13 @@ class MyWindow(tk.Tk):
             command=self.apply_show_list
         )
         apply_button.pack(side=tk.RIGHT)
+
+        # 导出目录结构到 pdf 中
+        export_button = tk.Button(
+            frame4, text='导出目录',
+            command=self.export_dir
+        )
+        export_button.pack(side=tk.RIGHT)
 
         # 清空分类结果按钮
         clean_button = tk.Button(
@@ -164,6 +174,11 @@ class MyWindow(tk.Tk):
         self.clfy_ins.target_dir = filedialog.askdirectory()
 
     @change_status
+    def set_content_list(self):
+        """设置分类名称"""
+        pass
+
+    @change_status
     def preview(self):
         """分类预览按钮动作
         点击后在预览框内显示分类结果(json 格式)
@@ -174,10 +189,18 @@ class MyWindow(tk.Tk):
         # print(content_list_in_text)
         if self.selection.get() == 0:
             self.clfy_ins.sort_by_extension()
-            preview_data = json.dumps(self.clfy_ins.extension_sorted, ensure_ascii=False, indent=4)
+            preview_data = json.dumps(
+                self.clfy_ins.extension_sorted,
+                ensure_ascii=False,
+                indent=4
+            )
         else:
             self.clfy_ins.sort_by_name(content_list)
-            preview_data = json.dumps(self.clfy_ins.name_sorted, ensure_ascii=False, indent=4)
+            preview_data = json.dumps(
+                self.clfy_ins.name_sorted,
+                ensure_ascii=False,
+                indent=4
+            )
         self.show_list.insert('end', preview_data)
 
     @change_status
@@ -190,15 +213,30 @@ class MyWindow(tk.Tk):
         self.clfy_ins.name_sorted.clear()
 
     @change_status
+    def export_dir(self):
+        """导出按钮功能
+        点击后导出分类结果到 txt 文件中
+        """
+        export_file = filedialog.asksaveasfile(
+            title='另存为',
+            initialdir=self.clfy_ins.target_dir,
+            filetypes=[('TXT', '.txt'), ('JSON', '.json')]
+        )
+        if export_file:
+            self.clfy_ins.export_dir(self.selection.get(), export_file.name)
+
+    @change_status
     def apply_show_list(self):
         """应用分类结果按钮
         点击后弹出提示框确认, 确认后实施分类
         """
-        # if self.selection == 0:
-        if self.selection.get() == 0:
-            self.clfy_ins.do_extension_sort(True)
-        else:
-            self.clfy_ins.do_name_sort(True)
+        msg_title = '是否确认'
+        msg_content = '这将会改变原有的目录结构, 你确定要继续吗?'
+        if tk.messagebox.askokcancel(title=msg_title, message=msg_content):
+            if self.selection.get() == 0:
+                self.clfy_ins.do_extension_sort(True)
+            else:
+                self.clfy_ins.do_name_sort(True)
 
 
 if __name__ == '__main__':

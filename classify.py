@@ -99,22 +99,23 @@ class Classify:
                 else:
                     shutil.move(filename, destination)
 
-
-def test():
-    """单元测试"""
-    test_target_dir = 'test'
-    if test_target_dir not in os.listdir('.'):
-        os.mkdir(test_target_dir)
-    test_dir = Classify(test_target_dir)
-    test_dir.sort_by_extension()
-    print(json.dumps(test_dir.extension_sorted, indent=4))
-    test_content_list = ['111', '2', '33']
-    test_dir.sort_by_name(test_content_list)
-    print(json.dumps(test_dir.name_sorted, indent=4))
-    test_dir.do_extension_sort(True)
-    # test_dir.do_name_sort()
-
-
-if __name__ == '__main__':
-    test()
-    print(os.path.abspath('.'))
+    def export_dir(self, chosen, filename):
+        """导出归类文件的目录结构到纯文本文件中
+        Args:
+            chosen (int): 0 表示使用的是文件扩展名归类, 否则是按名称归类
+            filename (str): 导出的文件名
+        """
+        if chosen == 0:
+            data = json.dumps(
+                self.extension_sorted,
+                ensure_ascii=False,
+                indent=4
+            )
+        else:
+            data = json.dumps(
+                self.name_sorted,
+                ensure_ascii=False,
+                indent=4
+            )
+        with open(filename, 'w') as export_file:
+            export_file.write(data)
