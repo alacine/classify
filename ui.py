@@ -243,9 +243,9 @@ class MyWindow(tk.Tk):
         msg_content = '这将会改变原有的目录结构, 你确定要继续吗?'
         if tk.messagebox.askokcancel(title=msg_title, message=msg_content):
             if self.selection.get() == 0:
-                self.clfy_ins.do_extension_sort(True)
+                self.clfy_ins.do_extension_sort()
             else:
-                self.clfy_ins.do_name_sort(True)
+                self.clfy_ins.do_name_sort()
 
 
 if __name__ == '__main__':
