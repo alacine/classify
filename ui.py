@@ -161,7 +161,7 @@ class MyWindow(tk.Tk):
             '1. 你使用的操作系统\n'
             '2. 问题截图'
         )
-        tk.messagebox.showinfo(title=msg_title, message=msg_content)
+        messagebox.showinfo(title=msg_title, message=msg_content)
 
     @staticmethod
     def how_to_use():
@@ -175,7 +175,7 @@ class MyWindow(tk.Tk):
             '3. 点击分类预览\n'
             '4. 确认分类无误后点击应用分类结果'
         )
-        tk.messagebox.showinfo(title=msg_title, message=msg_content)
+        messagebox.showinfo(title=msg_title, message=msg_content)
 
     @change_status
     def open_dir(self):
@@ -241,7 +241,7 @@ class MyWindow(tk.Tk):
         """
         msg_title = '提示'
         msg_content = '这将会改变原有的目录结构, 你确定要继续吗?'
-        if tk.messagebox.askokcancel(title=msg_title, message=msg_content):
+        if messagebox.askokcancel(title=msg_title, message=msg_content):
             if self.selection.get() == 0:
                 self.clfy_ins.do_extension_sort()
             else:
