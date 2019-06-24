@@ -41,7 +41,7 @@ class Classify:
     def sort_by_name(self, content_list: List[str]):
         """根据文件名称中包含的字段分类
         Args:
-            content (set[str]): 需要分类的字段集
+            content (list[str]): 需要分类的字段集
         """
         contents = set(content_list)
         for dirpath, dirnames, filenames in os.walk(self.target_dir):
