@@ -14,9 +14,15 @@
 |-----------------|--------------|
 | classify.py     | 功能模块     |
 | ui.py           | UI 模块      |
+| screenshot.png  | 效果图       |
 | expectation.png | 设计草图     |
 | test.py         | 测试         |
 | create_test.sh  | 创建测试目录 |
+
+### 效果图
+
+![screenshot](./screenshot.png)
+
 
 ### 设计草图
 
